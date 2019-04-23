@@ -1,7 +1,17 @@
+buildscript {
+    // Define versions in a single place
+    extra.apply {
+        set("pomFile", file("${project.buildDir}/generated-pom.xml"))
+    }
+}
+
 plugins {
     idea
     kotlin("multiplatform") version "1.3.21"
     id("kotlinx-serialization") version "1.3.21"
+    maven
+    signing
+    id("io.codearte.nexus-staging") version "0.11.0"
 }
 
 version = "0.1.0"
@@ -83,3 +93,19 @@ kotlin {
 //        }
     }
 }
+
+task<Jar>("sourcesJar"){
+    classifier = "sources"
+    from("src/commonMain/kotlin", "src/jvmMain/kotlin")
+}
+
+task<Javadoc>("javadoc"){
+
+}
+
+task<Jar>("javadocJar"){
+    classifier = "javadoc"
+    from(tasks.getByName("javadoc"))
+}
+
+apply { from("publish.gradle") }

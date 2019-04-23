@@ -1,0 +1,63 @@
+ext.isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
+
+artifacts {
+    archives jvmJar
+    archives sourcesJar
+    archives javadocJar
+}
+
+signing {
+    required { signatory != null && project.ext.isReleaseVersion }
+    sign configurations.archives
+}
+
+nexusStaging {
+    packageGroup = "com.github.wakingrufus"
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'filedb-jvm'
+                packaging 'jar'
+                group project.group
+                version project.version
+                // optionally artifactId can be defined here
+                description 'A library for using a filesystem as a database'
+                url 'https://github.com/wakingrufus/filedb'
+
+                scm {
+                    connection 'scm:git:https://github.com/wakingrufus/filedb.git'
+                    developerConnection 'scm:git:https://github.com/wakingrufus/filedb.git/'
+                    url 'https://github.com/wakingrufus/filedb'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'wakingrufus'
+                        name 'Rufus'
+                        email 'wakingrufus@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}

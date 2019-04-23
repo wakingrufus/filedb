@@ -1,7 +1,7 @@
 package com.github.wakingrufus.filedb
 
 import mu.KLogging
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,7 +47,8 @@ class FileDbTest {
         playerDb.update(playerId, player2)
         val actualPlayer2 = playerDb.latest(playerId)
         assertEquals(expected = player2, actual = actualPlayer2)
-        Assertions.assertThat(playerDb.allVersions(playerId))
+        assertThat(playerDb.allVersions(playerId))
+                .`as`("allVersions returns both versions")
                 .containsExactly(player, player2)
     }
 
@@ -62,7 +63,7 @@ class FileDbTest {
         val player2Id = playerDb.create(player2) ?: fail("no player created")
         val actualPlayer2 = playerDb.latest(player2Id)
         assertEquals(expected = player2, actual = actualPlayer2)
-        Assertions.assertThat(playerDb.allLatest())
+        assertThat(playerDb.allLatest())
                 .containsExactlyInAnyOrder(player, player2)
     }
 }
