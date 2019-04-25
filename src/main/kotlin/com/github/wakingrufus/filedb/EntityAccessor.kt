@@ -1,23 +1,25 @@
 package com.github.wakingrufus.filedb
 
+import com.github.wakingrufus.filedb.common.EntityAccessor
+import com.github.wakingrufus.filedb.common.EntityType
 import mu.KLogging
 import java.io.File
 import java.util.*
 
-actual class EntityAccessor<T>(rootDir: File, val type: EntityType<T>) {
+class JavaEntityAccessor<T>(rootDir: File, val type: EntityType<T>) : EntityAccessor<T> {
     companion object : KLogging()
 
     val entityTypeDir = File(rootDir, type.name).apply {
         this.mkdir()
     }
 
-    actual fun allLatest(): List<T> {
+    override fun allLatest(): List<T> {
         return entityTypeDir.listFiles()
                 .mapNotNull { it.listFiles().maxBy { it.name } }
                 .map { type.deserializer(it.readText()) }
     }
 
-    actual fun allVersions(id: String): List<T> {
+    override fun allVersions(id: String): List<T> {
         val entityDir = File(entityTypeDir, id)
         return if (entityDir.exists()) {
             entityDir.listFiles().map { type.deserializer(it.readText()) }
@@ -26,7 +28,7 @@ actual class EntityAccessor<T>(rootDir: File, val type: EntityType<T>) {
         }
     }
 
-    actual fun latest(id: String): T? {
+    override fun latest(id: String): T? {
         val entityDir = File(entityTypeDir, id)
         return if (entityDir.exists()) {
             entityDir.listFiles().maxBy { it.name }
@@ -36,7 +38,7 @@ actual class EntityAccessor<T>(rootDir: File, val type: EntityType<T>) {
         }
     }
 
-    actual fun create(data: T): String? {
+    override fun create(data: T): String? {
         val id = UUID.randomUUID()
         val entityDir = File(entityTypeDir, id.toString())
         if (!entityDir.exists()) {
@@ -50,7 +52,7 @@ actual class EntityAccessor<T>(rootDir: File, val type: EntityType<T>) {
 
     }
 
-    actual fun update(id: String, data: T) {
+    override fun update(id: String, data: T) {
         val entityDir = File(entityTypeDir, id)
         if (!entityDir.exists()) {
             entityDir.mkdir()

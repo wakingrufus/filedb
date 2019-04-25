@@ -1,9 +1,9 @@
 ext.isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
 
 artifacts {
-    archives jvmJar
+  //  archives jvmJar
     archives sourcesJar
-    archives javadocJar
+    archives dokkaJar
 }
 
 signing {
