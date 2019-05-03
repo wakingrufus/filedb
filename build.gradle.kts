@@ -15,7 +15,7 @@ plugins {
     id("io.codearte.nexus-staging") version "0.11.0"
 }
 
-project.version = "0.1.0"
+project.version = "0.2.0"
 project.group = "com.github.wakingrufus"
 
 repositories {
@@ -30,6 +30,8 @@ tasks.getByName<Wrapper>("wrapper") {
 
 
 dependencies {
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
 
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
@@ -46,6 +48,8 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
     testImplementation("org.assertj:assertj-core:3.12.2")
+    testImplementation("org.nield:kotlin-statistics:1.2.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
 
 }
 
