@@ -9,41 +9,38 @@ import java.util.*
 class JavaEntityAccessor<T>(rootDir: File, val type: EntityType<T>) : EntityAccessor<T> {
     companion object : KLogging()
 
-    val entityTypeDir = File(rootDir, type.name).apply {
+   private val entityTypeDir = File(rootDir, type.name).apply {
         this.mkdir()
     }
 
-    override fun allLatest(): List<T> {
-        return entityTypeDir.listFiles()
-                .mapNotNull { it.listFiles().maxBy { it.name } }
-                .map { type.deserializer(it.readText()) }
-    }
-
-    override fun allVersions(id: String): List<T> {
-        val entityDir = File(entityTypeDir, id)
-        return if (entityDir.exists()) {
-            entityDir.listFiles().map { type.deserializer(it.readText()) }
-        } else {
-            emptyList()
+    override fun all(): List<T> {
+        return entityTypeDir.listFiles().map {
+            type.deserializer(it.readText())
         }
     }
 
-    override fun latest(id: String): T? {
-        val entityDir = File(entityTypeDir, id)
-        return if (entityDir.exists()) {
-            entityDir.listFiles().maxBy { it.name }
-                    ?.let { type.deserializer(it.readText()) }
-        } else {
-            null
+    override fun allWithIds(): List<Pair<String, T>> {
+        return entityTypeDir.listFiles().map {
+            it.name.toString() to type.deserializer(it.readText())
         }
+    }
+
+    override fun get(id: String): T? {
+        return File(entityTypeDir, id)
+                .takeIf { it.exists() }
+                .let { it?.readText() }
+                .takeIf { it?.isNotEmpty() ?: false }
+                ?.let { type.deserializer(it) }
+    }
+
+    override fun getRootFile(): File {
+        return entityTypeDir
     }
 
     override fun create(data: T): String? {
         val id = UUID.randomUUID()
-        val entityDir = File(entityTypeDir, id.toString())
-        if (!entityDir.exists()) {
-            entityDir.mkdir()
-            val newFile = File(entityDir, "1")
+        val newFile = File(entityTypeDir, id.toString())
+        if (!newFile.exists()) {
             newFile.createNewFile()
             newFile.writeText(type.serializer(data))
             return id.toString()
@@ -53,13 +50,7 @@ class JavaEntityAccessor<T>(rootDir: File, val type: EntityType<T>) : EntityAcce
     }
 
     override fun update(id: String, data: T) {
-        val entityDir = File(entityTypeDir, id)
-        if (!entityDir.exists()) {
-            entityDir.mkdir()
-        }
-        val latestVersion = entityDir.list().mapNotNull { it.toIntOrNull() }.max() ?: 1
-        val newFile = File(entityDir, (latestVersion + 1).toString())
-        newFile.createNewFile()
-        newFile.writeText(type.serializer(data))
+        val file = File(entityTypeDir, id)
+        file.writeText(type.serializer(data))
     }
 }

@@ -1,5 +1,7 @@
 package com.github.wakingrufus.filedb.common
 
+import javafx.collections.ObservableMap
+import java.io.File
 import kotlin.reflect.KClass
 
 class EntityType<T>(val name: String,
@@ -17,18 +19,11 @@ class EntityMap(val map: Map<KClass<*>, EntityType<*>>,
     }
 }
 
-//expect class EntityAccessor<T> {
-//    fun allLatest(): List<T>
-//    fun allVersions(id: String): List<T>
-//    fun latest(id: String): T?
-//    fun create(data: T): String?
-//    fun update(id: String, data: T)
-//}
-
 interface EntityAccessor<T> {
-    fun allLatest(): List<T>
-    fun allVersions(id: String): List<T>
-    fun latest(id: String): T?
+    fun getRootFile(): File
+    fun allWithIds(): List<Pair<String,T>>
+    fun all(): List<T>
+    fun get(id: String): T?
     fun create(data: T): String?
     fun update(id: String, data: T)
 }

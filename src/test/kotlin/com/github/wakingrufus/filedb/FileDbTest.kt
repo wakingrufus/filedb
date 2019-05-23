@@ -26,13 +26,13 @@ class FileDbTest {
         val playerDb = db2.getAccessor<Player>()
         val player = Player(name = "name", rating = 1200)
         val playerId = playerDb.create(player) ?: fail("no player created")
-        val actual: Player? = playerDb.latest(playerId)
+        val actual: Player? = playerDb.get(playerId)
         assertEquals(expected = player, actual = actual)
 
         val game = Game(gameTime = now)
         val gameDb = db2.getAccessor<Game>()
         val gameId = gameDb.create(game) ?: fail("no player created")
-        val actualGame = gameDb.latest(gameId)
+        val actualGame = gameDb.get(gameId)
         assertEquals(expected = game, actual = actualGame)
     }
 
@@ -41,15 +41,12 @@ class FileDbTest {
         val player = Player(name = "name", rating = 1200)
         val playerDb = db2.getAccessor<Player>()
         val playerId = playerDb.create(player) ?: fail("no player created")
-        val actualPlayer = playerDb.latest(playerId)
+        val actualPlayer = playerDb.get(playerId)
         assertEquals(expected = player, actual = actualPlayer)
         val player2 = player.copy(name = "new name")
         playerDb.update(playerId, player2)
-        val actualPlayer2 = playerDb.latest(playerId)
+        val actualPlayer2 = playerDb.get(playerId)
         assertEquals(expected = player2, actual = actualPlayer2)
-        assertThat(playerDb.allVersions(playerId))
-                .`as`("allVersions returns both versions")
-                .containsExactly(player, player2)
     }
 
     @Test
@@ -57,13 +54,13 @@ class FileDbTest {
         val player = Player(name = "name", rating = 1200)
         val playerDb = db2.getAccessor<Player>()
         val playerId = playerDb.create(player) ?: fail("no player created")
-        val actualPlayer = playerDb.latest(playerId)
+        val actualPlayer = playerDb.get(playerId)
         assertEquals(expected = player, actual = actualPlayer)
         val player2 = player.copy(name = "new name")
         val player2Id = playerDb.create(player2) ?: fail("no player created")
-        val actualPlayer2 = playerDb.latest(player2Id)
+        val actualPlayer2 = playerDb.get(player2Id)
         assertEquals(expected = player2, actual = actualPlayer2)
-        assertThat(playerDb.allLatest())
+        assertThat(playerDb.all())
                 .containsExactlyInAnyOrder(player, player2)
     }
 }
