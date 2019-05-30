@@ -65,4 +65,19 @@ class FileDbTest {
         assertThat(playerDb.all())
                 .containsExactlyInAnyOrder(player, player2)
     }
+
+    @Test
+    fun `test all with ids`() {
+        val player = Player(name = "name", rating = 1200)
+        val playerDb = db2.getAccessor<Player>()
+        val playerId = playerDb.create(player) ?: fail("no player created")
+        val actualPlayer = playerDb.get(playerId)
+        assertEquals(expected = player, actual = actualPlayer)
+        val player2 = player.copy(name = "new name")
+        val player2Id = playerDb.create(player2) ?: fail("no player created")
+        val actualPlayer2 = playerDb.get(player2Id)
+        assertEquals(expected = player2, actual = actualPlayer2)
+        assertThat(playerDb.allWithIds())
+                .containsExactlyInAnyOrder(playerId to player, player2Id to player2)
+    }
 }
