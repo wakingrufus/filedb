@@ -1,15 +1,22 @@
 package com.github.wakingrufus.filedb
 
-import com.github.wakingrufus.filedb.common.EntityAccessor
-import com.github.wakingrufus.filedb.common.EntityType
 import mu.KLogging
 import java.io.File
 import java.util.*
 
+interface EntityAccessor<T> {
+    fun getRootFile(): File
+    fun allWithIds(): List<Pair<String, T>>
+    fun all(): List<T>
+    fun get(id: String): T?
+    fun create(data: T): String?
+    fun update(id: String, data: T)
+}
+
 class JavaEntityAccessor<T>(rootDir: File, val type: EntityType<T>) : EntityAccessor<T> {
     companion object : KLogging()
 
-   private val entityTypeDir = File(rootDir, type.name).apply {
+    private val entityTypeDir = File(rootDir, type.name).apply {
         this.mkdir()
     }
 

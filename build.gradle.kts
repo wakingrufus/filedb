@@ -15,7 +15,7 @@ plugins {
     id("io.codearte.nexus-staging") version "0.11.0"
 }
 
-project.version = "0.3.0"
+project.version = "0.4.0"
 project.group = "com.github.wakingrufus"
 
 repositories {

@@ -1,12 +1,14 @@
 package com.github.wakingrufus.filedb
 
-import com.github.wakingrufus.filedb.common.EntityAccessor
 import javafx.collections.ObservableMap
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import mu.KLogging
 import java.nio.file.FileSystems
 import java.nio.file.StandardWatchEventKinds.*
+
+val logger = KLogging().logger("ObservableMapExt")
 
 fun <V> ObservableMap<String, V>.bindTo(entityAccessor: EntityAccessor<V>) {
     entityAccessor.allWithIds().forEach {

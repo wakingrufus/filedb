@@ -1,5 +1,7 @@
 package com.github.wakingrufus.filedb
 
+import com.github.wakingrufus.filedb.jackson.jacksonEntity
+import com.github.wakingrufus.filedb.jackson.jacksonEntityType
 import javafx.collections.FXCollections
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
@@ -11,8 +13,8 @@ class ObservableMapExtTest {
     fun bindTo() {
         runBlocking {
             val db2 = fileDb(createTempDir(prefix = "tmp")) {
-                entity<Player>("player")
-                entity(jacksonEntity<Game>("game"))
+                jacksonEntity<Player>("player")
+                entity(jacksonEntityType<Game>("game"))
             }
             val map = FXCollections.observableHashMap<String, Player>()
             val playerDb = db2.getAccessor<Player>()

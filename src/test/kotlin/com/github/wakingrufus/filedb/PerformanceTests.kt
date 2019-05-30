@@ -1,19 +1,21 @@
 package com.github.wakingrufus.filedb
 
+import com.github.wakingrufus.filedb.jackson.jacksonEntity
+import com.github.wakingrufus.filedb.jackson.jacksonEntityType
 import mu.KLogging
 import org.assertj.core.api.Assertions.assertThat
-import kotlin.test.Test
 import org.nield.kotlinstatistics.descriptiveStatistics
 import org.nield.kotlinstatistics.simpleRegression
 import kotlin.math.absoluteValue
+import kotlin.test.Test
 import kotlin.test.fail
 
 class PerformanceTests {
     companion object : KLogging()
 
     val db2 = fileDb(createTempDir(prefix = "tmp")) {
-        entity<Player>("player")
-        entity(jacksonEntity<Game>("game"))
+        jacksonEntity<Player>("player")
+        entity(jacksonEntityType<Game>("game"))
     }
 
     fun warmUp() {
